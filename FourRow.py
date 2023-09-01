@@ -7,6 +7,36 @@ class Tablero:
     # Metodo para devolver el tablero de juego 
     def hacer_matriz(self) -> list:
         return [[0] * self.columna for _ in range(self.fila)]
+    
+    # Metodo para verificar el jugador ganador
+    def verificar_ganador(self, jugador) -> bool:
+        valor_juego = jugador.valor_juego
+        
+        # Verificar filas
+        for fila in self.matriz:
+            for col in range(self.columna - 3):
+                if all(cell == valor_juego for cell in fila[col:col+4]):
+                    return True
+        
+        # Verificar columnas
+        for col in range(self.columna):
+            for row in range(self.fila - 3):
+                if all(self.matriz[row+i][col] == valor_juego for i in range(4)):
+                    return True
+        
+        # Verificar diagonales ascendentes
+        for row in range(self.fila - 3):
+            for col in range(self.columna - 3):
+                if all(self.matriz[row+i][col+i] == valor_juego for i in range(4)):
+                    return True
+        
+        # Verificar diagonales descendentes
+        for row in range(3, self.fila):
+            for col in range(self.columna - 3):
+                if all(self.matriz[row-i][col+i] == valor_juego for i in range(4)):
+                    return True
+        
+        return False
         
 class Jugador:
     def __init__(self, nombre: str, valor_juego: int, turno: int):
@@ -39,8 +69,14 @@ B = Jugador("B", 2, 2)
 # Creación tablero de juego con clases
 tablero_juego = Tablero(6, 7)
 
-while(True):
-    B.jugar(tablero_juego.matriz)
+while True:
+    
+    if tablero_juego.verificar_ganador(B):
+        print(f"¡El jugador {B.nombre} ha ganado!")
+        break
+    else:
+        B.jugar(tablero_juego.matriz)
+        for filas in tablero_juego.matriz:
+            print(filas)
 
-    for filas in tablero_juego.matriz:
-        print(filas)
+    
